@@ -1,0 +1,69 @@
+<div class="container">
+    <!-- Header with buttons on top right -->
+    <div class="header">
+        <div class="welcome-text">
+            <h1>Contact Us</h1>
+            <p>Get in touch with our support team</p>
+        </div>
+        <div class="button-group-top-right">
+            <button 
+                (click)="onDash()" 
+                class="btn-primary btn-small"
+                [ngClass]="{'btn-active': isActiveRoute('/dash')}">
+                Dashboard
+            </button>
+            <button 
+                (click)="onAbout()" 
+                class="btn-primary btn-small"
+                [ngClass]="{'btn-active': isActiveRoute('/about')}">
+                About
+            </button>
+            <button 
+                (click)="onContact()" 
+                class="btn-primary btn-small"
+                [ngClass]="{'btn-active': isActiveRoute('/contact')}">
+                Contact
+            </button>
+        </div>
+    </div>
+
+    <!-- Single Contact Information Card -->
+    <div class="single-contact-container">
+        <div class="contact-card">
+            <h3>Contact Information</h3>
+
+            <!-- Email Support -->
+            <div class="contact-detail">
+                <div class="contact-icon">📧</div>
+                <div class="contact-info">
+                    <strong>General Support</strong>
+                    <span>fitnesstracker&#64;gmail.com</span>
+                </div>
+            </div>
+            <div class="contact-detail">
+                <div class="contact-icon">📱</div>
+                <div class="contact-info">
+                    <strong>Primary Number</strong>
+                    <span>+91 98765 43210</span>
+                </div>
+            </div>
+
+            <div class="contact-detail">
+                <div class="contact-icon">⏰</div>
+                <div class="contact-info">
+                    <strong>Available Hours</strong>
+                    <span>Mon-Fri: 9:00 AM - 6:00 PM IST</span>
+                </div>
+            </div>
+
+            <!-- Office Location -->
+            <div class="contact-detail">
+                <div class="contact-icon">📍</div>
+                <div class="contact-info">
+                    <strong>Head Office</strong>
+                    <span>123 Fitness Street, Health City, India</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Welcome, {{ user?.username }}</h2>
+    <p class="subtitle">Let's track your fitness journey today!</p>
+  </div>
+
+  <div class="button-group-top-right">
+    <button 
+      (click)="onDash()" 
+      class="btn-primary btn-small"
+      [ngClass]="{'btn-active': isActiveRoute('/dash')}">
+      Dashboard
+    </button>
+    <button 
+      (click)="onAbout()" 
+      class="btn-primary btn-small"
+      [ngClass]="{'btn-active': isActiveRoute('/about')}">
+      About
+    </button>
+    <button 
+      (click)="onContact()" 
+      class="btn-primary btn-small"
+      [ngClass]="{'btn-active': isActiveRoute('/contact')}">
+      Contact
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="bi bi-fire"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Calories</h3>
+        <p class="stat-value">{{ totalCalories }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="bi bi-graph-down-arrow"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Weight Loss</h3>
+        <p class="stat-value">{{ totalWeightLoss }} kg</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="bi bi-clock-history"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Workout History</h3>
+        <p class="stat-value">{{ user?.goalsHistory?.length || 0 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="main-card">
+      <h3>Add New Goal</h3>
+      <form class="goal-form" (ngSubmit)="updateGoal()">
+        <div class="form-group">
+          <label for="exercise">Exercise Type</label>
+          <select id="exercise" [(ngModel)]="exerciseType" name="exerciseType" (ngModelChange)="calculateCalories()" required>
+            <option value="" disabled>Select exercise</option>
+            <option value="running">Running</option>
+            <option value="cycling">Cycling</option>
+            <option value="swimming">Swimming</option>
+            <option value="jumping">Jump Rope</option>
+            <option value="yoga">Yoga</option>
+            <option value="walking">Walking</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="duration">Duration (minutes)</label>
+          <input id="duration" type="number" [(ngModel)]="targetDuration" name="targetDuration" (ngModelChange)="calculateCalories()" min="1" required />
+        </div>
+
+        <div class="form-group">
+          <label for="calories">Estimated Calories</label>
+          <input id="calories" type="number" [value]="targetCalories" readonly />
+        </div>
+
+        <button type="submit" class="btn-primary">Set Goal</button>
+      </form>
+    </div>
+
+    <div class="side-card" *ngIf="user?.goals">
+      <h3>Previous Goal</h3>
+      <div class="goal-details">
+        <div class="goal-item">
+          <span class="label">Exercise:</span>
+          <span class="value">{{ user!.goals!.exerciseType }}</span>
+        </div>
+        <div class="goal-item">
+          <span class="label">Duration:</span>
+          <span class="value">{{ user!.goals!.targetDuration }} mins</span>
+        </div>
+        <div class="goal-item">
+          <span class="label">Target:</span>
+          <span class="value">{{ user!.goals!.targetCalories }} cal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Filter and History Container -->
+  <div class="filter-history-container">
+    <!-- Left Side: Filter Controls -->
+    <div class="filter-controls">
+      <div class="filter-card">
+        <div class="filter-group">
+          <h4>Filter Workout History</h4>
+
+          <!-- ✅ Year Filter -->
+          <div class="filter-row">
+            <label for="year">Year:</label>
+            <select id="year" [(ngModel)]="selectedYear" (change)="applyFilter()">
+              <option value="">All</option>
+              <option *ngFor="let y of ['2023', '2024', '2025']" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+
+          <!-- Month Filter -->
+          <div class="filter-row">
+            <label for="month">Month:</label>
+            <select id="month" [(ngModel)]="selectedMonth" (change)="applyFilter()">
+              <option value="">All</option>
+              <option *ngFor="let m of ['01','02','03','04','05','06','07','08','09','10','11','12']" [value]="m">
+                {{ m }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Date Filter -->
+          <div class="filter-row">
+            <label for="date">Date:</label>
+            <select id="date" [(ngModel)]="selectedDate" (change)="applyFilter()">
+              <option value="">All</option>
+              <option *ngFor="let d of [].constructor(31); let i = index" [value]="(i + 1) < 10 ? '0' + (i + 1) : (i + 1)">
+                {{ (i + 1) < 10 ? '0' + (i + 1) : (i + 1) }}
+              </option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Exercise History -->
+    <div class="history-card" *ngIf="filteredGoals?.length">
+      <h3>Workout History</h3>
+      <div class="history-grid">
+        <div class="history-item" *ngFor="let goal of filteredGoals">
+          <div class="history-icon">
+            <i class="bi" [ngClass]="{
+              'bi-lightning': goal.exerciseType === 'running',
+              'bi-bicycle': goal.exerciseType === 'cycling',
+              'bi-water': goal.exerciseType === 'swimming'
+            }"></i>
+          </div>
+          <div class="history-details">
+            <p class="history-title">{{ goal.exerciseType }}</p>
+            <p class="history-subtitle">{{ goal.date | date:'MMM d, y, h:mm a' }}</p>
+            <div class="history-stats">
+              <span>{{ goal.targetDuration }} mins</span>
+              <span>{{ goal.targetCalories }} cal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Data Message -->
+    <div *ngIf="noDataFound" class="no-data-message">
+      No data found for the selected month, date and year.
+    </div>
+  </div>
+
+  <button class="btn-logout" (click)="logout()">
+    <i class="bi bi-box-arrow-right"></i> Logout
+  </button>
+</div>
