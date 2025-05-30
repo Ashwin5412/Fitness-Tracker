@@ -21,6 +21,19 @@ export class SignupComponent {
 
   constructor(private userService: UserService, private router: Router) { }
 
+
+  isPasswordValid(): boolean {
+  if (!this.password) return true;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
+  return passwordRegex.test(this.password);
+  }
+
+isEmailValid(): boolean {
+  if (!this.email) return true; 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(this.email);
+}
+
   onSubmit() {
     const user: User = {
       username: this.username,
@@ -35,5 +48,7 @@ export class SignupComponent {
       },
       error: () => this.error = 'Signup failed'
     });
+
+    
   }
 }

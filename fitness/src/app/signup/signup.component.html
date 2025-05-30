@@ -3,15 +3,27 @@
     <h2>Sign Up</h2>
     <form (ngSubmit)="onSubmit()">
       <div class="form-group">
+        <label>Username</label>
         <input type="text" placeholder="Username" [(ngModel)]="username" name="username" required />
       </div>
       <div class="form-group">
-        <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+        <label>Email</label>
+        <input type="email" placeholder="Example@gmail.com" [(ngModel)]="email" name="email" required
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" [class.invalid]="email && !isEmailValid()" />
+        <div class="email-error" *ngIf="email && !isEmailValid()" style="color: red;">
+          Please enter a valid email address
+        </div>
       </div>
       <div class="form-group">
-        <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
+        <label>Password</label>
+        <input type="password" placeholder="Example@1234" [(ngModel)]="password" name="password" required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?]).{6,}$"
+          [class.invalid]="password && !isPasswordValid()"/>
+        <div class="password-error" *ngIf="password && !isPasswordValid()" style="color: red;">
+          Password must contain: 1 uppercase, 1 lowercase, 1 number, 1 special character, min 6 chars
+        </div>
       </div>
-      <button type="submit">Sign Up</button>
+      <button type="submit" [disabled]="password && !isPasswordValid()">Sign Up</button>
       <p *ngIf="error">{{ error }}</p>
     </form>
   </div>
